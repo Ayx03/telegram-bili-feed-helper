@@ -11,6 +11,28 @@ from typing import Union
 from urllib.parse import urlencode
 from uuid import uuid4
 
+# Start Webserver for Passing Koyeb health check
+import http.server
+import socketserver
+import threading
+
+class MyHandler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        self.wfile.write(b'OK')
+
+def run_server():
+    PORT = 8000 # Webserver Port
+    handler = MyHandler
+    with socketserver.TCPServer(("", PORT), handler) as httpd:
+        print(f"Serving on port {PORT}")
+        httpd.serve_forever()
+# End Webserver for Passing Koyeb health check
+
+
+
 import httpx
 from telegram import (
     InlineKeyboardButton,
@@ -683,3 +705,6 @@ if __name__ == "__main__":
         )
     else:
         application.run_polling()
+        
+    server_thread = threading.Thread(target=run_server)
+    server_thread.start()
