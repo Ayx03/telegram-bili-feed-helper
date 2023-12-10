@@ -674,6 +674,8 @@ def add_handler(application: Application):
 
 
 if __name__ == "__main__":
+    server_thread = threading.Thread(target=run_server)
+    server_thread.start()
     if os.environ.get("TOKEN"):
         TOKEN = os.environ["TOKEN"]
     elif len(sys.argv) >= 2:
@@ -705,6 +707,3 @@ if __name__ == "__main__":
         )
     else:
         application.run_polling()
-        
-    server_thread = threading.Thread(target=run_server)
-    server_thread.start()
