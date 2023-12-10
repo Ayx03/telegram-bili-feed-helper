@@ -167,6 +167,8 @@ async def get_media(
 ) -> bytes | pathlib.Path:
     async with client.stream("GET", url, headers={"Referer": f.url}) as response:
         if response.status_code != 200:
+            # 向用户发送错误信息
+            await context.bot.send_message(chat_id=user_id, text=error_message)
             raise NetworkError(f"媒体文件获取错误: {response.status_code} {url}->{f.url}")
         mediatype = response.headers.get("content-type").split("/")
         if mediatype[0] in ["video", "audio"]:
